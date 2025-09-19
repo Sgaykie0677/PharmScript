@@ -171,7 +171,6 @@
             width: 100%;
             height: 80px;
         }
-
     </style>
 </head>
 <body>
@@ -188,7 +187,7 @@
                 <p><strong>Patient:</strong> <span id="display-patient"></span></p>
                 <p><strong>DOB:</strong> <span id="display-dob"></span></p>
                 <p><strong>Prescriber:</strong> <span id="display-prescriber"></span></p>
-                <p><strong>Drug:</strong> <span id="display-drug"></span></p>
+                <p><strong>Drug:</strong> <span id="display-generic"></span> / <span id="display-brand"></span></p>
                 <p><strong>SIG:</strong> <span id="display-sig"></span></p>
                 <p><strong>Days Supply:</strong> <span id="display-days-supply"></span></p>
             </div>
@@ -210,7 +209,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="drug-name">Drug</label>
-                            <input type="text" id="drug-name" placeholder="Drug & Strength">
+                            <input type="text" id="drug-name" placeholder="Generic or Brand & Strength">
                         </div>
                         <div class="form-group">
                             <label for="quantity">Quantity to Dispense</label>
@@ -239,7 +238,6 @@
             <p><strong>Phone:</strong> <span id="info-phone"></span></p>
             <p><strong>Address:</strong> <span id="info-address"></span></p>
         </section>
-
     </main>
 </div>
 
@@ -250,8 +248,9 @@
             patientDOB: "05/15/1988",
             patientPhone: "(305) 555-1212",
             patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            genericName: "Lisinopril 10 mg",
+            brandName: "Prinivil 10 mg",
             prescriberName: "Dr. Smith",
-            drug: "Lisinopril 10 mg",
             sig: "1 tab po qd",
             instructions: "Take one tablet by mouth every day.",
             daysSupply: 30,
@@ -262,8 +261,9 @@
             patientDOB: "12/01/1975",
             patientPhone: "(305) 555-1212",
             patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            genericName: "Amoxicillin 500 mg",
+            brandName: "Amoxil 500 mg",
             prescriberName: "Dr. Williams",
-            drug: "Amoxicillin 500 mg",
             sig: "1 cap po tid",
             instructions: "Take one capsule by mouth three times a day.",
             daysSupply: 10,
@@ -274,8 +274,9 @@
             patientDOB: "08/20/1995",
             patientPhone: "(305) 555-1212",
             patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            genericName: "Albuterol HFA 90 mcg",
+            brandName: "Proair 90 mcg",
             prescriberName: "Dr. Davis",
-            drug: "Albuterol HFA 90 mcg",
             sig: "2 inh po q4h prn",
             instructions: "Inhale two puffs by mouth every four hours as needed for shortness of breath.",
             daysSupply: 30,
@@ -286,8 +287,9 @@
             patientDOB: "02/28/1962",
             patientPhone: "(305) 555-1212",
             patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            genericName: "Metformin 500 mg",
+            brandName: "Glucophage 500 mg",
             prescriberName: "Dr. Jones",
-            drug: "Metformin 500 mg",
             sig: "1 tab po bid",
             instructions: "Take one tablet by mouth two times a day.",
             daysSupply: 90,
@@ -298,8 +300,9 @@
             patientDOB: "07/10/2000",
             patientPhone: "(305) 555-1212",
             patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            genericName: "Prednisone 5 mg",
+            brandName: "Deltasone 5 mg",
             prescriberName: "Dr. Taylor",
-            drug: "Prednisone 5 mg",
             sig: "1 tab po qid",
             instructions: "Take one tablet by mouth four times a day.",
             daysSupply: 7,
@@ -310,8 +313,9 @@
             patientDOB: "11/03/1950",
             patientPhone: "(305) 555-1212",
             patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            genericName: "Simvastatin 20 mg",
+            brandName: "Zocor 20 mg",
             prescriberName: "Dr. Wilson",
-            drug: "Simvastatin 20 mg",
             sig: "1 tab po qhs",
             instructions: "Take one tablet by mouth at bedtime.",
             daysSupply: 90,
@@ -322,8 +326,9 @@
             patientDOB: "04/25/1990",
             patientPhone: "(305) 555-1212",
             patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            genericName: "Cephalexin 250 mg / 5 mL",
+            brandName: "Keflex 250 mg / 5 mL",
             prescriberName: "Dr. Martinez",
-            drug: "Cephalexin 250 mg / 5 mL",
             sig: "1 tsp po bid",
             instructions: "Take one teaspoon by mouth two times a day.",
             daysSupply: 10,
@@ -336,7 +341,8 @@
     const displayPatient = document.getElementById('display-patient');
     const displayDOB = document.getElementById('display-dob');
     const displayPrescriber = document.getElementById('display-prescriber');
-    const displayDrug = document.getElementById('display-drug');
+    const displayGeneric = document.getElementById('display-generic');
+    const displayBrand = document.getElementById('display-brand');
     const displaySig = document.getElementById('display-sig');
     const displayDaysSupply = document.getElementById('display-days-supply');
     
@@ -367,7 +373,8 @@
         displayPatient.textContent = rx.patientName;
         displayDOB.textContent = rx.patientDOB;
         displayPrescriber.textContent = rx.prescriberName;
-        displayDrug.textContent = rx.drug;
+        displayGeneric.textContent = rx.genericName;
+        displayBrand.textContent = rx.brandName;
         displaySig.textContent = rx.sig;
         displayDaysSupply.textContent = rx.daysSupply;
         
@@ -402,7 +409,7 @@
 
         const isPatientCorrect = userPatient === rx.patientName.toLowerCase();
         const isPrescriberCorrect = userPrescriber === rx.prescriberName.toLowerCase();
-        const isDrugCorrect = userDrug === rx.drug.toLowerCase();
+        const isDrugCorrect = (userDrug === rx.genericName.toLowerCase() || userDrug === rx.brandName.toLowerCase());
         const isSigCorrect = userSig === rx.instructions.toLowerCase();
         const isQuantityCorrect = userQuantity === rx.quantity;
         
@@ -425,7 +432,7 @@
             feedbackDiv.innerHTML = `Incorrect. You got ${correctCount} of ${totalChecks} fields right.<br>`;
             if (!isPatientCorrect) feedbackDiv.innerHTML += `Patient name is incorrect. The correct answer is: "${rx.patientName}"<br>`;
             if (!isPrescriberCorrect) feedbackDiv.innerHTML += `Prescriber name is incorrect. The correct answer is: "${rx.prescriberName}"<br>`;
-            if (!isDrugCorrect) feedbackDiv.innerHTML += `Drug info is incorrect. The correct answer is: "${rx.drug}"<br>`;
+            if (!isDrugCorrect) feedbackDiv.innerHTML += `Drug info is incorrect. The correct answers are: "${rx.genericName}" or "${rx.brandName}"<br>`;
             if (!isSigCorrect) feedbackDiv.innerHTML += `SIG instructions are incorrect. The correct answer is: "${rx.instructions}"<br>`;
             if (!isQuantityCorrect) feedbackDiv.innerHTML += `Quantity is incorrect. The correct answer is: ${rx.quantity}<br>`;
         }
