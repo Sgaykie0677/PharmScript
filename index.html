@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Practice System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #D4D0C8; /* Classic Windows gray */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #D4D0C8;
+            box-shadow: 
+                inset -1px -1px #808080,
+                inset 1px 1px #FFFFFF,
+                inset -2px -2px #C0C0C0,
+                inset 2px 2px #E0E0E0;
+            border-radius: 0;
+            padding: 10px;
+        }
+        
+        .header-bar {
+            background-color: #000080; /* Dark blue top bar */
+            color: #FFFFFF;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .main-form {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-left {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-right {
+            width: 250px;
+            flex-shrink: 0;
+            background-color: #D4D0C8;
+            border: 1px solid #808080;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            background-color: #B8CFE5;
+            color: black;
+            padding: 4px;
+            border: 1px solid #808080;
+            margin-bottom: 10px;
+            font-size: 1em;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .prescription-display {
+            background-color: #FFFFFF;
+            border: 1px solid #808080;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-shadow: 
+                inset -1px -1px #808080,
+                inset 1px 1px #FFFFFF;
+        }
+        
+        .prescription-display p {
+            margin: 4px 0;
+            font-size: 0.9em;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        .form-group input, .form-group textarea {
+            padding: 5px;
+            border: 1px solid #808080;
+            background-color: #F0F0F0;
+            box-shadow: inset 1px 1px 1px #808080, inset -1px -1px 1px #FFFFFF;
+            font-size: 0.9em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            border: 2px solid #D4D0C8;
+            background-color: #D4D0C8;
+            cursor: pointer;
+            box-shadow: 
+                inset -1px -1px #0A0A0A,
+                inset 1px 1px #FFFFFF,
+                inset -2px -2px #808080,
+                inset 2px 2px #DFDFDF;
+            transition: all 0.05s linear;
+        }
+        
+        .btn:active {
+            box-shadow: 
+                inset -1px -1px #FFFFFF,
+                inset 1px 1px #0A0A0A,
+                inset -2px -2px #DFDFDF,
+                inset 2px 2px #808080;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+
+        #feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        #feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        #instructions-input {
+            width: 100%;
+            height: 80px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-bar">
+        Prescriptions | Reports | Tools | Delivery | Window | Help
+    </div>
+
+    <main class="main-form">
+        <section class="form-left">
+            <div class="prescription-display">
+                <div class="section-header">Incoming Prescription</div>
+                <p><strong>Patient:</strong> <span id="display-patient"></span></p>
+                <p><strong>DOB:</strong> <span id="display-dob"></span></p>
+                <p><strong>Prescriber:</strong> <span id="display-prescriber"></span></p>
+                <p><strong>Drug:</strong> <span id="display-drug"></span></p>
+                <p><strong>SIG:</strong> <span id="display-sig"></span></p>
+                <p><strong>Days Supply:</strong> <span id="display-days-supply"></span></p>
+            </div>
+    
+            <div class="form-section">
+                <div class="section-header">Enter Prescription Details</div>
+                <form id="rx-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patient-name">Patient Name</label>
+                            <input type="text" id="patient-name" placeholder="Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescriber-name">Prescriber Name</label>
+                            <input type="text" id="prescriber-name" placeholder="Dr. Name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="drug-name">Drug</label>
+                            <input type="text" id="drug-name" placeholder="Drug & Strength">
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity to Dispense</label>
+                            <input type="number" id="quantity" placeholder="Calculated Quantity">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sig-instructions">Patient Instructions (SIG)</label>
+                        <textarea id="sig-instructions" rows="4" placeholder="Type out the full directions here..."></textarea>
+                    </div>
+    
+                    <div class="buttons">
+                        <button type="button" class="btn" id="check-btn">Check Answers</button>
+                        <button type="button" class="btn" id="next-btn">Next Prescription</button>
+                    </div>
+                </form>
+            </div>
+            <div id="feedback"></div>
+        </section>
+
+        <section class="form-right">
+            <div class="section-header">Patient Info</div>
+            <p><strong>Name:</strong> <span id="info-patient-name"></span></p>
+            <p><strong>DOB:</strong> <span id="info-dob"></span></p>
+            <p><strong>Phone:</strong> <span id="info-phone"></span></p>
+            <p><strong>Address:</strong> <span id="info-address"></span></p>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    const prescriptions = [
+        {
+            patientName: "Jane Doe",
+            patientDOB: "05/15/1988",
+            patientPhone: "(305) 555-1212",
+            patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            prescriberName: "Dr. Smith",
+            drug: "Lisinopril 10 mg",
+            sig: "1 tab po qd",
+            instructions: "Take one tablet by mouth every day.",
+            daysSupply: 30,
+            quantity: 30
+        },
+        {
+            patientName: "John Smith",
+            patientDOB: "12/01/1975",
+            patientPhone: "(305) 555-1212",
+            patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            prescriberName: "Dr. Williams",
+            drug: "Amoxicillin 500 mg",
+            sig: "1 cap po tid",
+            instructions: "Take one capsule by mouth three times a day.",
+            daysSupply: 10,
+            quantity: 30
+        },
+        {
+            patientName: "Sarah Johnson",
+            patientDOB: "08/20/1995",
+            patientPhone: "(305) 555-1212",
+            patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            prescriberName: "Dr. Davis",
+            drug: "Albuterol HFA 90 mcg",
+            sig: "2 inh po q4h prn",
+            instructions: "Inhale two puffs by mouth every four hours as needed for shortness of breath.",
+            daysSupply: 30,
+            quantity: 200
+        },
+        {
+            patientName: "Michael Brown",
+            patientDOB: "02/28/1962",
+            patientPhone: "(305) 555-1212",
+            patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            prescriberName: "Dr. Jones",
+            drug: "Metformin 500 mg",
+            sig: "1 tab po bid",
+            instructions: "Take one tablet by mouth two times a day.",
+            daysSupply: 90,
+            quantity: 180
+        },
+        {
+            patientName: "Emily White",
+            patientDOB: "07/10/2000",
+            patientPhone: "(305) 555-1212",
+            patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            prescriberName: "Dr. Taylor",
+            drug: "Prednisone 5 mg",
+            sig: "1 tab po qid",
+            instructions: "Take one tablet by mouth four times a day.",
+            daysSupply: 7,
+            quantity: 28
+        },
+        {
+            patientName: "David Miller",
+            patientDOB: "11/03/1950",
+            patientPhone: "(305) 555-1212",
+            patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            prescriberName: "Dr. Wilson",
+            drug: "Simvastatin 20 mg",
+            sig: "1 tab po qhs",
+            instructions: "Take one tablet by mouth at bedtime.",
+            daysSupply: 90,
+            quantity: 90
+        },
+        {
+            patientName: "Olivia Garcia",
+            patientDOB: "04/25/1990",
+            patientPhone: "(305) 555-1212",
+            patientAddress: "123 Getaway Lane, Tallahassee, FL 32317",
+            prescriberName: "Dr. Martinez",
+            drug: "Cephalexin 250 mg / 5 mL",
+            sig: "1 tsp po bid",
+            instructions: "Take one teaspoon by mouth two times a day.",
+            daysSupply: 10,
+            quantity: 200
+        }
+    ];
+
+    let currentRxIndex;
+
+    const displayPatient = document.getElementById('display-patient');
+    const displayDOB = document.getElementById('display-dob');
+    const displayPrescriber = document.getElementById('display-prescriber');
+    const displayDrug = document.getElementById('display-drug');
+    const displaySig = document.getElementById('display-sig');
+    const displayDaysSupply = document.getElementById('display-days-supply');
+    
+    const infoPatientName = document.getElementById('info-patient-name');
+    const infoDOB = document.getElementById('info-dob');
+    const infoPhone = document.getElementById('info-phone');
+    const infoAddress = document.getElementById('info-address');
+    
+    const patientNameInput = document.getElementById('patient-name');
+    const prescriberNameInput = document.getElementById('prescriber-name');
+    const drugNameInput = document.getElementById('drug-name');
+    const quantityInput = document.getElementById('quantity');
+    const sigInstructionsInput = document.getElementById('sig-instructions');
+    
+    const checkBtn = document.getElementById('check-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const feedbackDiv = document.getElementById('feedback');
+
+    function loadNewPrescription() {
+        if (prescriptions.length === 0) {
+            alert("All prescriptions have been used! Reload the page to start over.");
+            return;
+        }
+        currentRxIndex = Math.floor(Math.random() * prescriptions.length);
+        const rx = prescriptions[currentRxIndex];
+        
+        // Display prescription details
+        displayPatient.textContent = rx.patientName;
+        displayDOB.textContent = rx.patientDOB;
+        displayPrescriber.textContent = rx.prescriberName;
+        displayDrug.textContent = rx.drug;
+        displaySig.textContent = rx.sig;
+        displayDaysSupply.textContent = rx.daysSupply;
+        
+        // Display patient info on the side panel
+        infoPatientName.textContent = rx.patientName;
+        infoDOB.textContent = rx.patientDOB;
+        infoPhone.textContent = rx.patientPhone;
+        infoAddress.textContent = rx.patientAddress;
+
+        // Clear input fields
+        patientNameInput.value = '';
+        prescriberNameInput.value = '';
+        drugNameInput.value = '';
+        quantityInput.value = '';
+        sigInstructionsInput.value = '';
+
+        feedbackDiv.style.display = 'none';
+        checkBtn.disabled = false;
+    }
+
+    function checkAnswers() {
+        const rx = prescriptions[currentRxIndex];
+        
+        const userPatient = patientNameInput.value.trim().toLowerCase();
+        const userPrescriber = prescriberNameInput.value.trim().toLowerCase();
+        const userDrug = drugNameInput.value.trim().toLowerCase();
+        const userSig = sigInstructionsInput.value.trim().toLowerCase();
+        const userQuantity = parseInt(quantityInput.value.trim(), 10);
+        
+        let correctCount = 0;
+        let totalChecks = 5;
+
+        const isPatientCorrect = userPatient === rx.patientName.toLowerCase();
+        const isPrescriberCorrect = userPrescriber === rx.prescriberName.toLowerCase();
+        const isDrugCorrect = userDrug === rx.drug.toLowerCase();
+        const isSigCorrect = userSig === rx.instructions.toLowerCase();
+        const isQuantityCorrect = userQuantity === rx.quantity;
+        
+        if(isPatientCorrect) correctCount++;
+        if(isPrescriberCorrect) correctCount++;
+        if(isDrugCorrect) correctCount++;
+        if(isSigCorrect) correctCount++;
+        if(isQuantityCorrect) correctCount++;
+        
+        feedbackDiv.style.display = 'block';
+        if (correctCount === totalChecks) {
+            feedbackDiv.classList.remove('incorrect');
+            feedbackDiv.classList.add('correct');
+            feedbackDiv.textContent = `All correct! You're ready for the next one.`;
+            prescriptions.splice(currentRxIndex, 1);
+            checkBtn.disabled = true;
+        } else {
+            feedbackDiv.classList.remove('correct');
+            feedbackDiv.classList.add('incorrect');
+            feedbackDiv.innerHTML = `Incorrect. You got ${correctCount} of ${totalChecks} fields right.<br>`;
+            if (!isPatientCorrect) feedbackDiv.innerHTML += `Patient name is incorrect. The correct answer is: "${rx.patientName}"<br>`;
+            if (!isPrescriberCorrect) feedbackDiv.innerHTML += `Prescriber name is incorrect. The correct answer is: "${rx.prescriberName}"<br>`;
+            if (!isDrugCorrect) feedbackDiv.innerHTML += `Drug info is incorrect. The correct answer is: "${rx.drug}"<br>`;
+            if (!isSigCorrect) feedbackDiv.innerHTML += `SIG instructions are incorrect. The correct answer is: "${rx.instructions}"<br>`;
+            if (!isQuantityCorrect) feedbackDiv.innerHTML += `Quantity is incorrect. The correct answer is: ${rx.quantity}<br>`;
+        }
+    }
+
+    checkBtn.addEventListener('click', checkAnswers);
+    nextBtn.addEventListener('click', loadNewPrescription);
+
+    loadNewPrescription();
+
+</script>
+
+</body>
+</html>
